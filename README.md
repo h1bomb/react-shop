@@ -12,7 +12,7 @@ This is a online Shop！Build by React, Apollo GraphQL, AntD and mongodb.
 
 Just for fun!
 
-## useage
+## usage
 
 ```shell
 yarn 
