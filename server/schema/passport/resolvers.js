@@ -16,13 +16,13 @@ module.exports = {
     }
   },
   Mutation: {
-    createUser: async (root, data, { mongo: { Users } }) => {
-      console.log(data);
+    createUser: async (root, data, { req, mongo: { Users } }) => {
       const newUser = {
         email: data.email.email,
         password: data.email.password
       };
       const response = await Users.insert(newUser);
+      req.cookies.set("token", response.insertedIds[0]);
       return Object.assign(
         {
           id: response.insertedIds[0]

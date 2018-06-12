@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import App from "./components/App";
 import Passport from "./components/passport";
 import Profile from "./components/passport/Profile";
+import Register from "./components/passport/Register";
 import AuthCompont from "./components/base/AuthCompont";
 import registerServiceWorker from "./registerServiceWorker";
 import { Layout } from "antd";
@@ -26,6 +27,7 @@ ReactDOM.render(
         >
           
           <Switch>
+            <Route path="/register" component={Register} />
             <Route path="/login" component={Passport} />
             <AuthCompont exact isPublic="true" path="/" component={App} />
             <AuthCompont exact path="/profile" component={Profile} />
