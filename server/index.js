@@ -29,7 +29,7 @@ const start = async () => {
     await next();
     ctx.set("access-control-allow-credentials", "true");
     ctx.set("access-control-allow-headers", "content-type");
-    ctx.set("access-control-allow-origin", "*");
+    ctx.set("access-control-allow-origin", "http://localhost:3000");
   });
 
   router.post("/graphql", graphqlKoa(buildOptions));

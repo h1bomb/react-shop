@@ -4,18 +4,13 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import App from "./components/App";
 import Passport from "./components/passport";
 import Profile from "./components/passport/Profile";
-import PrivateRoute from "./components/base/PrivateRoute";
+import AuthCompont from "./components/base/AuthCompont";
 import registerServiceWorker from "./registerServiceWorker";
 import { Layout } from "antd";
-import ApolloClient from "apollo-boost";
 import { ApolloProvider } from "react-apollo";
+import client from "./util/client";
+
 const { Content } = Layout;
-
-const client = new ApolloClient({
-    uri: "http://localhost:3001/graphql"
-});
-
-
 
 ReactDOM.render(
   <ApolloProvider client={client}>
@@ -29,10 +24,11 @@ ReactDOM.render(
             minHeight: 280
           }}
         >
+          
           <Switch>
             <Route path="/login" component={Passport} />
-            <Route exact path="/" component={App} />
-            <PrivateRoute exact path="/profile" component={Profile} />
+            <AuthCompont exact isPublic="true" path="/" component={App} />
+            <AuthCompont exact path="/profile" component={Profile} />
           </Switch>
         </Content>
       </Layout>

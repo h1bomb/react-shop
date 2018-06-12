@@ -5,10 +5,12 @@ const resolvers = require("./resolvers");
 const typeDefs = `
     type Query {
         allUsers: [User!]!
+        curUser: User
     }
     type Mutation {
         createUser(email: AUTH_PROVIDER_EMAIL!): User
         signinUser(email: AUTH_PROVIDER_EMAIL): SigninPayload!
+        signoutUser(input: String): String
     }
   
     type User {

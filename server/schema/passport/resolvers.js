@@ -2,11 +2,22 @@ module.exports = {
   Query: {
     allUsers: async (root, data, { mongo: { Users } }) => {
       return await Users.find({}).toArray();
+    },
+    curUser: async (root, data, { user }) => {
+      if (user) {
+        return user;
+      } else {
+        return {
+          password: "",
+          id: "",
+          email: ""
+        };
+      }
     }
   },
   Mutation: {
     createUser: async (root, data, { mongo: { Users } }) => {
-        console.log(data);
+      console.log(data);
       const newUser = {
         email: data.email.email,
         password: data.email.password
@@ -19,21 +30,27 @@ module.exports = {
         newUser
       );
     },
-    signinUser: async (root, data,{ req, mongo: { Users } }) => {
-        let user = await Users.findOne({
+    signinUser: async (root, data, { req, mongo: { Users } }) => {
+      let user = await Users.findOne({
         email: data.email.email
       });
       if (user && data.email.password === user.password) {
-        req.cookies.set('email',user.email);
+        req.cookies.set("token", user._id);
         return {
-          token: `token-${user.email}`,
+          token: `token-${user._id}`,
           user
         };
       } else {
         return {
-          token: ''
-        }
+          token: ""
+        };
       }
+    },
+    signoutUser: (root, data, { req, user }) => {
+      if (user) {
+        req.cookies.set("token", null);
+      }
+      return "";
     }
   },
   User: {

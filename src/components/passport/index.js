@@ -4,7 +4,6 @@ import { Redirect } from "react-router-dom";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 import "./index.css";
-import {fakeAuth} from "../base/PrivateRoute";
 
 const FormItem = Form.Item;
 
@@ -29,14 +28,12 @@ class NormalLoginForm extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        signIn({ variables: { email: values } }).then(({data}) => {
-          if(data.signinUser.user) {
-            message.info('Sign in!');
-            fakeAuth.authenticate(() => {
-              this.setState({ redirectToReferrer: true });
-            });
+        signIn({ variables: { email: values } }).then(({ data }) => {
+          if (data.signinUser.user) {
+            message.info("Sign in!");
+            this.setState({ redirectToReferrer: true });
           } else {
-            message.error('Sign fail!');
+            message.error("Sign fail!");
           }
         });
       }
@@ -53,7 +50,7 @@ class NormalLoginForm extends Component {
 
     return (
       <Mutation mutation={SIGNIN_USER}>
-        {(signinUser, { data, loading, error }) => (
+        {(signinUser, { loading, error }) => (
           <Form
             onSubmit={e => {
               this.handleSubmit(e, signinUser);
