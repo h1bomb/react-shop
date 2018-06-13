@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Form, Icon, Input, Button, message } from "antd";
-import { Redirect } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 import "./index.css";
@@ -95,7 +95,7 @@ class NormalLoginForm extends Component {
               >
                 Log in
               </Button>
-              Or <a href="">register now!</a>
+              Or <Link to="/register">register now!</Link>
             </FormItem>
           </Form>
         )}

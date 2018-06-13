@@ -73,6 +73,7 @@ class NormalRegisterForm extends Component {
       <Mutation mutation={REGISTER}>
         {(createUser, { loading, error }) => (
           <Form
+            style={{ maxWidth: 500, margin: "0 auto" }}
             onSubmit={e => {
               this.handleSubmit(e, createUser);
             }}
