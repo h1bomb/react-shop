@@ -3,11 +3,20 @@ const koaRouter = require("koa-router");
 const koaBody = require("koa-bodyparser");
 const { graphqlKoa, graphiqlKoa } = require("apollo-server-koa");
 const connectMongo = require("./schema/mongo-connector");
-const schema = require("./schema/passport");
+const passportSchema = require("./schema/passport");
+const itemSchema = require("./schema/item");
+const { mergeSchemas } = require("graphql-tools");
 const { authenticate } = require("./authentication");
 const app = new koa();
 const router = new koaRouter();
 const PORT = 3001;
+const schema = mergeSchemas({
+  schemas: [
+    passportSchema,
+    itemSchema
+  ]
+});
+
 const start = async () => {
   const mongo = await connectMongo();
 
@@ -38,8 +47,7 @@ const start = async () => {
   router.get(
     "/graphiql",
     graphiqlKoa({
-      endpointURL: "/graphql", // a POST endpoint that GraphiQL will make the actual requests to
-      passHeader: `'Authorization': 'bearer token-hbomb@126.com'`
+      endpointURL: "/graphql" // a POST endpoint that GraphiQL will make the actual requests to
     })
   );
 

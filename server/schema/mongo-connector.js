@@ -20,6 +20,7 @@ module.exports = async () => {
     console.log("Connected successfully to server");
     const db = client.db(dbName);
     return {
-        Users: db.collection('users')
+        Users: db.collection('users'),
+        Items: db.collection('items')
     };
 }
