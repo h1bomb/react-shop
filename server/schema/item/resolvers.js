@@ -13,27 +13,34 @@ module.exports = {
   Mutation: {
     saveItem: async (root, data, { mongo: { Items } }) => {
       let response;
-      if (!data.id) {
-        response = await Items.insert(data.item);
+      let { item } = data;
+      if (!item.id) {
+        response = await Items.insert(item);
         return Object.assign(
           {
             id: response.insertedIds[0]
           },
-          data.item
+          item
         );
       } else {
-        response = await Items.update({
-          name: item.name,
-          cover: item.cover,
-          description: item.description,
-          stock: item.stock
-        }, { _id: item.id });
-        console.log(response);
+        response = await Items.updateOne(
+          { _id: ObjectID(item.id) },
+          {
+            $set: {
+              name: item.name,
+              cover: item.cover,
+              description: item.description,
+              stock: item.stock
+            }
+          }
+        );
+        if (response.modifiedCount === 0) {
+          return { id: 0, cover: "", description: "", stock: 0 };
+        }
         return data.item;
       }
-
     },
-    deleteItem: async (root, data, { req, mongo: { Items } }) => {
+    deleteItem: async (root, data, { mongo: { Items } }) => {
       const response = await Items.deleteOne({
         _id: ObjectID(data.id)
       });

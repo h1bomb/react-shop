@@ -20,7 +20,7 @@ const typeDefs = `
     }
 
     type Item {
-        id: ID
+        id: ID!
         name: String!
         cover: String!
         description: String!

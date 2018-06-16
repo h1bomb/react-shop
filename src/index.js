@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import App from "./components/App";
 import Passport from "./components/passport";
 import Profile from "./components/passport/Profile";
+import Item from "./components/item";
 import Register from "./components/passport/Register";
 import AuthCompont from "./components/base/AuthCompont";
 import registerServiceWorker from "./registerServiceWorker";
@@ -30,19 +31,20 @@ ReactDOM.render(
           >
             <Menu.Item key="1"><Link to="/">index</Link></Menu.Item>
             <Menu.Item key="2"><Link to="/profile">profile</Link></Menu.Item>
+            <Menu.Item key="3"><Link to="/item">item</Link></Menu.Item>
           </Menu>
         </Header>
         <Content
           style={{
             background: "#fff",
             padding: 24,
-            margin: 50,
-            minHeight: 280
+            margin: 50
           }}
         >
           <Switch>
             <Route path="/register" component={Register} />
             <Route path="/login" component={Passport} />
+            <Route path="/item" component={Item} />
             <AuthCompont exact isPublic="true" path="/" component={App} />
             <AuthCompont exact path="/profile" component={Profile} />
           </Switch>
