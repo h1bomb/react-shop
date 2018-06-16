@@ -30,12 +30,13 @@ module.exports = {
               name: item.name,
               cover: item.cover,
               description: item.description,
-              stock: item.stock
+              stock: item.stock,
+              price: item.price
             }
           }
         );
         if (response.modifiedCount === 0) {
-          return { id: 0, cover: "", description: "", stock: 0 };
+          return { id: 0, cover: "", description: "", stock: 0, price:0 };
         }
         return data.item;
       }

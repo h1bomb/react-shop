@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, Modal, Form, Input } from "antd";
+import { Button, Modal, Form, Input,InputNumber } from "antd";
 const FormItem = Form.Item;
 
 /**
@@ -62,7 +62,7 @@ class FormPanel extends Component {
               <FormItem label={val.key} key={val.key}>
                 {getFieldDecorator(val.key, {
                   rules: [{ required: val.required, message: val.message }]
-                })(<Input />)}
+                })(val.type==="number"?<InputNumber min={0} max={1000}/>:<Input />)}
               </FormItem>
             ))}
           </Form>

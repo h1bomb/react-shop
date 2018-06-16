@@ -12,6 +12,7 @@ const ITEM_LIST = gql`
       description
       cover
       stock
+      price
     }
   }
 `;
@@ -30,6 +31,7 @@ const SAVE_ITEM = gql`
       description
       cover
       stock
+      price
     }
   }
 `;
@@ -62,9 +64,17 @@ const ItemForm = ({ submit, item, action }) => {
       message: "Please input the description!"
     },
     {
+        key: "price",
+        label: "Price",
+        required: true,
+        type: "number",
+        message: "Please input the price!"
+      },
+    {
       key: "stock",
       label: "Stock",
       required: true,
+      type: "number",
       message: "Please input the stock!"
     }
   ];
@@ -167,6 +177,11 @@ const columns = [
     title: "description",
     dataIndex: "description",
     key: "description"
+  },
+  {
+    title: "price",
+    dataIndex: "price",
+    key: "price"
   },
   {
     title: "stock",

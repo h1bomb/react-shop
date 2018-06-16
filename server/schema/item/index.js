@@ -17,6 +17,7 @@ const typeDefs = `
         cover: String!
         description: String!
         stock: Int
+        price: Int
     }
 
     type Item {
@@ -25,6 +26,7 @@ const typeDefs = `
         cover: String!
         description: String!
         stock: Int
+        price: Int
     }
 `;
 
