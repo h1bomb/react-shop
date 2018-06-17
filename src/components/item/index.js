@@ -181,12 +181,14 @@ const columns = [
   {
     title: "price",
     dataIndex: "price",
-    key: "price"
+    key: "price",
+    width:80
   },
   {
     title: "stock",
     dataIndex: "stock",
-    key: "stock"
+    key: "stock",
+    width:80
   },
   {
     title: "Action",

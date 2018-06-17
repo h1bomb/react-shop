@@ -24,9 +24,10 @@ class Logout extends Component {
             return "";
           }
           return (
-            <div>
+            <div style={{ float: "right", color: "#fff" }}>
               {curUser.email}
               <Button
+                style={{ marginLeft: 10 }}
                 type="primary"
                 loading={loading}
                 onClick={e => {
