@@ -5,6 +5,8 @@ const { graphqlKoa, graphiqlKoa } = require("apollo-server-koa");
 const connectMongo = require("./schema/mongo-connector");
 const passportSchema = require("./schema/passport");
 const itemSchema = require("./schema/item");
+const cartSchema = require("./schema/cart");
+const orderSchema = require("./schema/order");
 const { mergeSchemas } = require("graphql-tools");
 const { authenticate } = require("./authentication");
 const app = new koa();
@@ -13,7 +15,9 @@ const PORT = 3001;
 const schema = mergeSchemas({
   schemas: [
     passportSchema,
-    itemSchema
+    itemSchema,
+    cartSchema,
+    orderSchema
   ]
 });
 

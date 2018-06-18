@@ -21,6 +21,9 @@ module.exports = async () => {
     const db = client.db(dbName);
     return {
         Users: db.collection('users'),
-        Items: db.collection('items')
+        Items: db.collection('items'),
+        Orders: db.collection('orders'),
+        Address: db.collection('address'),
+        Carts: db.collection('cart')
     };
 }
