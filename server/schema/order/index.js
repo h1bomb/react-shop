@@ -5,7 +5,7 @@ const resolvers = require("./resolvers");
 const typeDefs = `
     type Query {
         userOrders: [Order!]!
-        addresses(uid: ID): [Address!]!
+        userAddresses(uid: ID): [Address!]!
     }
     type Mutation {
         submitOrder(order: ORDER): Order

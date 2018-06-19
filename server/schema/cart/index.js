@@ -4,7 +4,7 @@ const resolvers = require("./resolvers");
 // The GraphQL schema in string form
 const typeDefs = `
     type Query {
-        cartList: [CartItem]
+        userCartList: [CartItem]
     }
     type Mutation {
         saveCartItem(cartItem: CARTITEM): CartItem!

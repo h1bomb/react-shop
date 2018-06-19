@@ -95,7 +95,7 @@ class RenderCompont extends Component {
                 float: "left",
                 margin: "16px 24px 16px 0"
               }}
-              src="img/shop.png"
+              src="/img/shop.png"
             />
             <MainMenu menus={menu} curMenus={this.props.path} />
             <Logout {...this.props} curUser={this.state.curUser} />

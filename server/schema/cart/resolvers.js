@@ -2,7 +2,7 @@ const { ObjectID } = require("mongodb");
 
 module.exports = {
   Query: {
-    cartList: async (root, data, { user, mongo: { Carts } }) => {
+    userCartList: async (root, data, { user, mongo: { Carts } }) => {
       if (!user) {
         return [];
       }

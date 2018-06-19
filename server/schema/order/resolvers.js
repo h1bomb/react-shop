@@ -8,7 +8,7 @@ module.exports = {
       }
       return await Orders.find({ uid: ObjectID(user._id) }).toArray();
     },
-    addresses: async (root, data, { user,mongo: { Address } }) => {
+    userAddresses: async (root, data, { user,mongo: { Address } }) => {
       if (!user) {
         return [];
       }
