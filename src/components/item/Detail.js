@@ -1,7 +1,8 @@
 import React from "react";
-import { Card, Button } from "antd";
-import { Query } from "react-apollo";
+import { Card, Button, message } from "antd";
+import { Query, Mutation } from "react-apollo";
 import gql from "graphql-tag";
+import Loading from "../base/Loading";
 const { Meta } = Card;
 
 const ITEM_LIST = gql`
@@ -16,15 +17,52 @@ const ITEM_LIST = gql`
   }
 `;
 
+const SAVE_CART_ITEM = gql`
+  mutation saveCartItem($cartItem: CARTITEM) {
+    saveCartItem(cartItem: $cartItem) {
+      itemId
+      item {
+        name
+        cover
+        price
+      }
+      count
+    }
+  }
+`;
+const AddToCart = ({ id }) => {
+  return (
+    <Mutation mutation={SAVE_CART_ITEM}>
+      {(saveCartItem, { loading, error }) => (
+        <div>
+          <Button
+            onClick={() => {
+              const savePr = saveCartItem({
+                variables: { cartItem: { itemId: id, count: 1 } }
+              });
+              savePr.then(data => {
+                message.success("add success!");
+              });
+            }}
+          >
+            Add To Cart
+          </Button>
+          <Loading loading={loading} error={error} />
+        </div>
+      )}
+    </Mutation>
+  );
+};
+
 const Detail = ({ detail }) => (
   <Card
-    style={{width: 320, margin:"0 auto"}}
+    style={{ width: 320, margin: "0 auto" }}
     hoverable
     cover={<img alt={detail.name} src={detail.cover} />}
   >
     <Meta title={detail.name} description={`￥${detail.price}.00`} />
     <p>{detail.description} </p>
-    <Button>Add To Cart</Button>
+    <AddToCart id={detail.id} />
   </Card>
 );
 

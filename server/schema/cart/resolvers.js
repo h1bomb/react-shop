@@ -46,7 +46,7 @@ module.exports = {
     },
     deleteCartItem: async (root, data, { mongo: { Carts } }) => {
       const response = await Carts.deleteOne({
-        _id: ObjectID(data.id)
+        itemId: data.id
       });
       if (response.deletedCount === 1) {
         return data.id;

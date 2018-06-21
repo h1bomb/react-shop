@@ -4,6 +4,7 @@ import Profile from "../components/passport/Profile";
 import Item from "../components/item";
 import Detail from "../components/item/Detail";
 import Register from "../components/passport/Register";
+import Cart from "../components/shopping/Cart";
 
 export const menu = [
   {
@@ -34,6 +35,9 @@ export const routes = [{
 },{
     path: "/item",
     component: Item
+},{
+    path: "/cart",
+    component: Cart
 },{
     path: "/profile",
     component: Profile

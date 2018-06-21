@@ -1,8 +1,9 @@
 import React from "react";
 import { Query, Mutation } from "react-apollo";
 import gql from "graphql-tag";
-import { Table, Button, Spin, message } from "antd";
+import { Table, Button} from "antd";
 import Popform from "../base/PopForm";
+import Loading from "../base/Loading";
 
 const ITEM_LIST = gql`
   query itemList {
@@ -35,13 +36,6 @@ const SAVE_ITEM = gql`
     }
   }
 `;
-
-const Loading = ({ loading, error }) => (
-  <div>
-    {loading && <Spin />}
-    {error && message.error(":( Please try again")}
-  </div>
-);
 
 const ItemForm = ({ submit, item, action }) => {
   const formSet = [
