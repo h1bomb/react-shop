@@ -25,7 +25,7 @@ module.exports = {
       if (!item) {
         return errorObj;
       }
-
+// TODO 库存数量的处理
       const cartItemObj = {
         uid: user._id,
         count: cartItem.count,

@@ -44,7 +44,10 @@ const CartList = ({ data }) => (
 );
 
 const Cart = () => (
-  <Query query={USER_CART_LIST}>
+  <Query 
+    query={USER_CART_LIST} 
+    fetchPolicy="network-only"
+  >
     {({ loading, error, data }) => {
       return (
         <div>

@@ -30,6 +30,7 @@ const SAVE_CART_ITEM = gql`
     }
   }
 `;
+
 const AddToCart = ({ id }) => {
   return (
     <Mutation mutation={SAVE_CART_ITEM}>
