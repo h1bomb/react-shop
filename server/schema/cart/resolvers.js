@@ -25,10 +25,25 @@ module.exports = {
       if (!item) {
         return errorObj;
       }
-// TODO 库存数量的处理
+
+      let count = cartItem.count;
+
+      const existCartItem = await Carts.findOne({
+        uid: user._id,
+        itemId: cartItem.itemId
+      });
+      if (existCartItem && existCartItem.count) {
+        if (item.stock < existCartItem.count + cartItem.count) {
+          return {
+            message: "stock not enough!"
+          };
+        }
+        count += existCartItem.count;
+      }
+
       const cartItemObj = {
         uid: user._id,
-        count: cartItem.count,
+        count,
         itemId: cartItem.itemId,
         item: {
           id: item._id,
@@ -37,12 +52,16 @@ module.exports = {
           price: item.price
         }
       };
-      await Carts.update(
+      const ret = await Carts.update(
         { uid: user._id, itemId: cartItem.itemId },
         cartItemObj,
         { upsert: true }
       );
-      return await Carts.findOne({ uid: user._id, itemId: cartItem.itemId });
+      if (ret.result.nModified > 0) {
+        return { cartItem: cartItemObj };
+      } else {
+        return { message: 'add to cart fail!'}
+      }
     },
     deleteCartItem: async (root, data, { mongo: { Carts } }) => {
       const response = await Carts.deleteOne({

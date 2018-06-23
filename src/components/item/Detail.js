@@ -20,13 +20,7 @@ const ITEM_LIST = gql`
 const SAVE_CART_ITEM = gql`
   mutation saveCartItem($cartItem: CARTITEM) {
     saveCartItem(cartItem: $cartItem) {
-      itemId
-      item {
-        name
-        cover
-        price
-      }
-      count
+      message
     }
   }
 `;
@@ -37,18 +31,23 @@ const AddToCart = ({ id }) => {
       {(saveCartItem, { loading, error }) => (
         <div>
           <Button
+            loading={loading}
             onClick={() => {
               const savePr = saveCartItem({
                 variables: { cartItem: { itemId: id, count: 1 } }
               });
-              savePr.then(data => {
+              savePr.then(({ data }) => {
+                if (data.saveCartItem.message) {
+                  message.warning(data.saveCartItem.message);
+                  return;
+                }
                 message.success("add success!");
               });
             }}
           >
             Add To Cart
           </Button>
-          <Loading loading={loading} error={error} />
+          <Loading error={error} />
         </div>
       )}
     </Mutation>

@@ -7,8 +7,13 @@ const typeDefs = `
         userCartList: [CartItem]
     }
     type Mutation {
-        saveCartItem(cartItem: CARTITEM): CartItem!
+        saveCartItem(cartItem: CARTITEM): SaveRet
         deleteCartItem(id: ID!): String
+    }
+
+    type SaveRet {
+        cartItem: CartItem
+        message: String
     }
    
     input CARTITEM {
