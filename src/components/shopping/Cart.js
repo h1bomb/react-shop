@@ -25,7 +25,7 @@ const DELETE_CART_ITEM = gql`
   }
 `;
 
-const CartList = ({ data }) => (
+const CartList = ({ data, showDelete }) => (
   <List
     itemLayout="horizontal"
     dataSource={data}
@@ -36,23 +36,24 @@ const CartList = ({ data }) => (
           title={<Link to={`/item/${item.itemId}`}>{item.item.name}</Link>}
           description={`￥${item.item.price}.00`}
         />
-        <p style={{lineHeight:"32px",marginRight:"10px"}}>{item.count}</p>
-        <DeleteCartItem id={item.itemId} />
+        <p style={{ lineHeight: "32px", marginRight: "10px" }}>{item.count}</p>
+        {(() => {
+          if (showDelete) {
+            return <DeleteCartItem id={item.itemId} />;
+          }
+        })()}
       </List.Item>
     )}
   />
 );
 
-const Cart = () => (
-  <Query 
-    query={USER_CART_LIST} 
-    fetchPolicy="network-only"
-  >
+const Cart = ({ showDelete = true }) => (
+  <Query query={USER_CART_LIST} fetchPolicy="network-only">
     {({ loading, error, data }) => {
       return (
         <div>
           <Loading loading={loading} error={error} />
-          <CartList data={data.userCartList} />
+          <CartList data={data.userCartList} showDelete={showDelete} />
         </div>
       );
     }}

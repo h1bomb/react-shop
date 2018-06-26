@@ -57,10 +57,10 @@ module.exports = {
         cartItemObj,
         { upsert: true }
       );
-      if (ret.result.nModified > 0) {
+      if (ret.result.nModified > 0 || ret.result.upserted) {
         return { cartItem: cartItemObj };
       } else {
-        return { message: 'add to cart fail!'}
+        return { message: "add to cart fail!" };
       }
     },
     deleteCartItem: async (root, data, { mongo: { Carts } }) => {

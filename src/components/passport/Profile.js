@@ -15,9 +15,8 @@ export default () => (
   <Card title="User Profile" style={{ width: 300 }}>
     <Query query={CURUSER}>
       {({ loading, error, data }) => {
-        if (loading) return "Loading...";
+        if (loading) return "";
         if (error) return `Error! ${error.message}`;
-
         return (
         <div>
           <p>{data.curUser.email}</p>
