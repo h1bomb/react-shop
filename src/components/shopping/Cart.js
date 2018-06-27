@@ -1,7 +1,7 @@
 import React from "react";
 import { Query, Mutation } from "react-apollo";
 import gql from "graphql-tag";
-import { List, Avatar, Button } from "antd";
+import { List, Avatar, Button, Row, Col } from "antd";
 import { Link } from "react-router-dom";
 import Loading from "../base/Loading";
 
@@ -25,7 +25,7 @@ const DELETE_CART_ITEM = gql`
   }
 `;
 
-const CartList = ({ data, showDelete }) => (
+const CartList = ({ data, canModify }) => (
   <List
     itemLayout="horizontal"
     dataSource={data}
@@ -38,7 +38,7 @@ const CartList = ({ data, showDelete }) => (
         />
         <p style={{ lineHeight: "32px", marginRight: "10px" }}>{item.count}</p>
         {(() => {
-          if (showDelete) {
+          if (canModify) {
             return <DeleteCartItem id={item.itemId} />;
           }
         })()}
@@ -47,13 +47,26 @@ const CartList = ({ data, showDelete }) => (
   />
 );
 
-const Cart = ({ showDelete = true }) => (
+const Cart = ({ canModify = true }) => (
   <Query query={USER_CART_LIST} fetchPolicy="network-only">
     {({ loading, error, data }) => {
       return (
         <div>
           <Loading loading={loading} error={error} />
-          <CartList data={data.userCartList} showDelete={showDelete} />
+          <CartList data={data.userCartList} canModify={canModify} />
+          {(() => {
+            if (canModify) {
+              return (
+                <Row>
+                  <Col span={2} offset={22}>
+                    <Link to="/order">
+                      <Button>Order</Button>
+                    </Link>
+                  </Col>
+                </Row>
+              );
+            }
+          })()}
         </div>
       );
     }}
