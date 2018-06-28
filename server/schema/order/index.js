@@ -29,7 +29,6 @@ const typeDefs = `
 
     type Address {
         id: ID!
-        uid: ID!
         mobile: String!
         receiver: String!
         address: String!
@@ -37,7 +36,6 @@ const typeDefs = `
 
     type Order {
         id: ID!
-        uid:ID!
         address: Address!
         description: String
         items: [OrderItem!]!

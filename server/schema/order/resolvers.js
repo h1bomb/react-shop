@@ -57,10 +57,11 @@ module.exports = {
       if (!user) {
         return null;
       }
-      
+
       const { address } = data;
-      addressId = (address.id ? address.id : ObjectID());
+      addressId = (address.id ? ObjectID(address.id) : ObjectID());
       const condition = { _id: addressId, uid: user._id };
+      delete address.id;
       await Address.update(
         condition,
         {...address, uid: user._id},
