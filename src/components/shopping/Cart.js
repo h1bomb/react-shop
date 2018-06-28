@@ -8,6 +8,7 @@ import Loading from "../base/Loading";
 const USER_CART_LIST = gql`
   query userCartList {
     userCartList {
+      id
       itemId
       item {
         name
@@ -47,9 +48,12 @@ const CartList = ({ data, canModify }) => (
   />
 );
 
-const Cart = ({ canModify = true }) => (
+const Cart = ({ canModify = true, setCartIds }) => (
   <Query query={USER_CART_LIST} fetchPolicy="network-only">
     {({ loading, error, data }) => {
+      if(setCartIds && data.userCartList) {
+        setCartIds(data.userCartList.map(val=>val.id));
+      }
       return (
         <div>
           <Loading loading={loading} error={error} />

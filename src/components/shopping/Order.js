@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
-import { Button } from "antd";
-import Loading from "../base/Loading";
+import { Button, message } from "antd";
 import Cart from "../shopping/Cart";
 import Address from "../shopping/Address";
 
@@ -14,38 +13,56 @@ const SUBMIT_ORDER = gql`
   }
 `;
 
-
 class Order extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            addressId:0,
-            cartIds:[]
-        }
-        this.lala = '';
-    }
+  constructor(props) {
+    super(props);
+    this.addressId = "";
+    this.cartIds = [];
+  }
 
-    setAddress = (value) => {
-        // this.setState({
-        //     addressId: value
-        // });
-        this.lala = value;
-        console.log("lala:"+this.lala);
-    }
+  setAddress = value => {
+    this.addressId = value;
+  };
 
-    setCartIds = (ids)=>{
-        this.setState({
-            cartIds: ids
-        });
-    }
+  setCartIds = ids => {
+    this.cartIds = ids;
+  };
 
-    render() {
-    return (<div>
-        <Address setAddress={this.setAddress}  />
-        <Cart setCartIds={this.setCartIds} canModify = {false}/>
-        <Button onClick={()=>{console.log(this.lala)}}>Submit</Button>
-    </div>)
-    }
+  render() {
+    return (
+      <div>
+        <Address setAddress={this.setAddress} />
+        <Cart setCartIds={this.setCartIds} canModify={false} />
+        <Mutation mutation={SUBMIT_ORDER}>
+          {(submitOrder, { loading, error }) => (
+            <Button
+              loading={loading}
+              onClick={() => {
+                if (error) {
+                  message.error("something wrong!");
+                  return;
+                }
+                submitOrder({
+                  variables: {
+                    order: {
+                      addressId: this.addressId,
+                      cartIds: this.cartIds
+                    }
+                  }
+                }).then(data => {
+                  if (data.data.submitOrder.id) {
+                    message.success("order success!");
+                  }
+                });
+              }}
+            >
+              Submit
+            </Button>
+          )}
+        </Mutation>
+      </div>
+    );
+  }
 }
 
 export default Order;
