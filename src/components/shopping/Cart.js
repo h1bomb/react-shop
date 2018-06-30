@@ -26,7 +26,7 @@ const DELETE_CART_ITEM = gql`
   }
 `;
 
-const CartList = ({ data, canModify }) => (
+export const CartList = ({ data, canModify }) => (
   <List
     itemLayout="horizontal"
     dataSource={data}

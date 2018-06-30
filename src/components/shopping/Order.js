@@ -4,6 +4,7 @@ import gql from "graphql-tag";
 import { Button, message } from "antd";
 import Cart from "../shopping/Cart";
 import Address from "../shopping/Address";
+import {withRouter} from "react-router-dom";
 
 const SUBMIT_ORDER = gql`
   mutation submitOrder($order: ORDER) {
@@ -52,6 +53,7 @@ class Order extends Component {
                 }).then(data => {
                   if (data.data.submitOrder.id) {
                     message.success("order success!");
+                    this.props.history.push("/orderlist");
                   }
                 });
               }}
@@ -65,4 +67,4 @@ class Order extends Component {
   }
 }
 
-export default Order;
+export default withRouter(Order);
