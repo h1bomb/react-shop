@@ -1,7 +1,7 @@
 import React from "react";
-import { Query } from "react-apollo";
+import { Query, Mutation } from "react-apollo";
 import gql from "graphql-tag";
-import { Card, Collapse, Spin, message } from "antd";
+import { Card, Collapse, Spin, message,Button } from "antd";
 import { CartList } from "./Cart";
 const Panel = Collapse.Panel;
 
@@ -27,10 +27,16 @@ const ORDER_LIST = gql`
   }
 `;
 
+const CANCEL_ORDER = gql`
+  mutation cancelOrder($orderId: ID) {
+    cancelOrder(orderId: $orderId)
+  }
+`;
+
 const OrderItems = ({ items }) => (
   <Collapse defaultActiveKey={items.map(item => item.id)}>
     {items.map(item => (
-      <Panel header={`Order ID:${item.id}`} key={item.id}>
+      <Panel header={(<span>Order ID:{item.id}<CancelOrder orderId={item.id} /></span>)} key={item.id}>
         <Card title="Address Detail">
           <p>receiver:{item.address.receiver}</p>
           <p>mobile:{item.address.mobile}</p>
@@ -62,6 +68,44 @@ const OrderList = () => (
       return <OrderItems items={data.userOrders} />;
     }}
   </Query>
+);
+
+const CancelOrder = ({ orderId }) => (
+  <Mutation 
+    mutation={CANCEL_ORDER}
+    update={
+        cache => {
+        const { userOrders } = cache.readQuery({ query: ORDER_LIST });
+        cache.writeQuery({
+          query: ORDER_LIST,
+          data: {
+            userOrders: userOrders.filter(val => val.id !== orderId)
+          }
+        });}
+     }
+    >
+    {(submitOrder, { loading, error }) => (
+      <Button
+        style={{float:"right", margin:"-5px 5px 0 0"}}
+        type="danger"
+        loading={loading}
+        onClick={() => {
+          if (error) {
+            message.error("something wrong!");
+          }
+          submitOrder({
+            variables: {
+              orderId
+            }
+          }).then(data=>{
+              if(data.cancelOrder) {
+                  message.success("cancel order success!");
+              }
+          });
+        }}
+      >Cancel Order</Button>
+    )}
+  </Mutation>
 );
 
 export default OrderList;

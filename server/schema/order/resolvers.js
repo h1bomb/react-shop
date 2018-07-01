@@ -6,7 +6,7 @@ module.exports = {
       if (!user) {
         return [];
       }
-      return await Orders.find({ uid: ObjectID(user._id) }).toArray();
+      return await Orders.find({ uid: ObjectID(user._id),state : { $ne : 'caneled' }  }).toArray();
     },
     userAddresses: async (root, data, { user,mongo: { Address } }) => {
       if (!user) {
@@ -52,6 +52,19 @@ module.exports = {
         orderObj
       );
 
+    },
+    cancelOrder: async (root, data, { user, mongo: { Orders } }) => {
+      if(!user) {
+        return '';
+      }
+      const ret = await Orders.update(
+        { uid: user._id, _id: ObjectID(data.orderId)},
+        { $set: { state: 'caneled' }}
+      );
+      if (ret.result.nModified > 0) {
+        return data.orderId;
+      } 
+      return '';
     },
     saveAddress: async (root, data, { user, mongo: { Address } }) => {
       if (!user) {

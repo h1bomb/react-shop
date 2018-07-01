@@ -9,6 +9,7 @@ const typeDefs = `
     }
     type Mutation {
         submitOrder(order: ORDER): Order
+        cancelOrder(orderId: ID): ID
         saveAddress(address: ADDR): Address
         deleteAddress(addressId: ID!): ID!
     }
