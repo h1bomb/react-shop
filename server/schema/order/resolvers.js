@@ -1,5 +1,28 @@
 const { ObjectID } = require("mongodb");
 
+const checkAndUpdateStock = async (Items,cartItems) =>{
+  const itemIds = [];
+  const itemStock = {};
+
+  cartItems.forEach(cartItem=>{
+    itemStock[cartItem.item.id] = cartItem.item.count;
+    itemIds.push(cartItem.item.id);
+  });
+
+  const items =  await Items.find({ _id: {$in: itemIds}});
+  const rets = {};
+
+  items.forEach(val => {
+    const count = itemStock[val._id];
+    if(val.stock > stock) {
+      const ret = await Items.update({_id: val._id},{$set: {stock:(val.stock - count)}});
+      rets[val._id] = ret.result;
+    }
+  });
+
+  return rets;
+}
+
 module.exports = {
   Query: {
     userOrders: async (root, data, { user, mongo: { Orders } }) => {
@@ -16,7 +39,7 @@ module.exports = {
     }
   },
   Mutation: {
-    submitOrder: async (root, data, { user, mongo: { Orders, Carts, Address } }) => {
+    submitOrder: async (root, data, { user, mongo: { Orders, Carts, Address, Items } }) => {
       if (!user) {
         return 0;
       }
@@ -45,6 +68,11 @@ module.exports = {
         total
       };
       const response = await Orders.insert(orderObj);
+      if(response.insertedIds[0]) {
+        Carts.delete({uid: user._id});
+        checkAndUpdateStock(Items, cartItems);
+      }
+
       return Object.assign(
         {
           id: response.insertedIds[0]
