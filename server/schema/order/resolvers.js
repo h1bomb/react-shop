@@ -11,15 +11,19 @@ const checkAndUpdateStock = async (Items,cartItems) =>{
 
   const items =  await Items.find({ _id: {$in: itemIds}});
   const rets = {};
+  console.log('items:',rets);
 
-  items.forEach(val => {
+  items.forEach(async val => {
     const count = itemStock[val._id];
     if(val.stock > stock) {
       const ret = await Items.update({_id: val._id},{$set: {stock:(val.stock - count)}});
       rets[val._id] = ret.result;
+    } else {
+      rets[val._id] = false;
     }
   });
-
+  
+  console.log('rets:',rets);
   return rets;
 }
 
@@ -69,7 +73,8 @@ module.exports = {
       };
       const response = await Orders.insert(orderObj);
       if(response.insertedIds[0]) {
-        Carts.delete({uid: user._id});
+        const ret =  await Carts.deleteMany({uid: user._id});
+        console.log('clear cart:',ret);
         checkAndUpdateStock(Items, cartItems);
       }
 

@@ -59,7 +59,7 @@ const Cart = ({ canModify = true, setCartIds }) => (
           <Loading loading={loading} error={error} />
           <CartList data={data.userCartList} canModify={canModify} />
           {(() => {
-            if (canModify) {
+            if (canModify && data.userCartList && data.userCartList.length>0) {
               return (
                 <Row>
                   <Col span={2} offset={22}>
