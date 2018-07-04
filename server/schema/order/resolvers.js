@@ -4,18 +4,16 @@ const checkAndUpdateStock = async (Items,cartItems) =>{
   const itemIds = [];
   const itemStock = {};
 
-  cartItems.forEach(cartItem=>{
-    itemStock[cartItem.item.id] = cartItem.item.count;
+  cartItems.forEach(cartItem => {
+    itemStock[cartItem.item.id] = cartItem.count;
     itemIds.push(cartItem.item.id);
   });
-
-  const items =  await Items.find({ _id: {$in: itemIds}});
+  const items =  await Items.find({ _id: {$in: itemIds}}).toArray();
   const rets = {};
-  console.log('items:',rets);
 
   items.forEach(async val => {
     const count = itemStock[val._id];
-    if(val.stock > stock) {
+    if(val.stock > count) {
       const ret = await Items.update({_id: val._id},{$set: {stock:(val.stock - count)}});
       rets[val._id] = ret.result;
     } else {
