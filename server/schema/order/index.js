@@ -1,5 +1,5 @@
-const { makeExecutableSchema } = require("graphql-tools");
-const resolvers = require("./resolvers");
+const { makeExecutableSchema } = require('graphql-tools');
+const resolvers = require('./resolvers');
 
 // The GraphQL schema in string form
 const typeDefs = `
@@ -54,8 +54,8 @@ const typeDefs = `
 
 // Put together a schema
 const schema = makeExecutableSchema({
-  typeDefs,
-  resolvers
+    typeDefs,
+    resolvers
 });
 
 // 根据所有类型来生成模式对象

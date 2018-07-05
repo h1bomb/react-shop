@@ -1,6 +1,6 @@
 const { ObjectID } = require("mongodb");
 
-const checkAndUpdateStock = async (Items,cartItems) =>{
+const checkAndUpdateStock = async (Items,cartItems) => {
   const itemIds = [];
   const itemStock = {};
 

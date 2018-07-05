@@ -4,7 +4,7 @@ import gql from "graphql-tag";
 import { Button, message } from "antd";
 import Cart from "../shopping/Cart";
 import Address from "../shopping/Address";
-import {withRouter} from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 const SUBMIT_ORDER = gql`
   mutation submitOrder($order: ORDER) {
@@ -34,7 +34,12 @@ class Order extends Component {
       <div>
         <Address setAddress={this.setAddress} />
         <Cart setCartIds={this.setCartIds} canModify={false} />
-        <Mutation mutation={SUBMIT_ORDER}>
+        <Mutation
+          mutation={SUBMIT_ORDER}
+          update={cache => {
+            cache.reset();
+          }}
+        >
           {(submitOrder, { loading, error }) => (
             <Button
               loading={loading}
