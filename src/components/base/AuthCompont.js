@@ -5,6 +5,8 @@ import { menu } from "../../util/config";
 import Logout from "../passport/Logout";
 import gql from "graphql-tag";
 import { Layout, Menu } from "antd";
+import NProgress from 'nprogress'
+
 const { Header, Content } = Layout;
 
 const CURUSER = gql`
@@ -80,9 +82,11 @@ class RenderCompont extends Component {
           curUser: {}
         });
       }
+      NProgress.done();
     });
   }
   render() {
+    NProgress.start();
     if (this.props.isPublic || this.state.authState === 1) {
       return (
         <div>
