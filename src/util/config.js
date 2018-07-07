@@ -7,6 +7,7 @@ import Register from "../components/passport/Register";
 import Cart from "../components/shopping/Cart";
 import Order from "../components/shopping/Order";
 import OrderList from "../components/shopping/OrderList";
+import Upload from "../components/Upload";
 
 export const menu = [
   {
@@ -49,7 +50,12 @@ export const routes = [{
 },{
     path: "/profile",
     component: Profile
-},{
+},
+{
+    path: "/upload",
+    component: Upload
+},
+{
     path: "/",
     component: App,
     isPublic: true
