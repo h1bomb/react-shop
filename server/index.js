@@ -1,8 +1,7 @@
 const koa = require("koa"); // koa@2
 const koaRouter = require("koa-router");
-const koaBody = require("koa-bodyparser");
+const koaBody = require("koa-body");
 const fs = require("fs");
-const parse = require("busboy-file-parser")
 
 const cors = require('koa2-cors');
 const path = require('path');
@@ -42,9 +41,6 @@ const start = async () => {
     };
   };
 
-  app.use(koaBody({ multipart: true }));
-
-
   app.use(cors({
     origin: function(ctx) {
       return 'http://localhost:3000';
@@ -56,17 +52,17 @@ const start = async () => {
     allowHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
   }));
 
-  router.post('/upload',async function(ctx, next) {
-     const {files} = await parse(ctx.req);
+  router.post('/upload',koaBody({multipart:true}),async function(ctx, next) {
+     const files = ctx.request.files;
      const fileId = Math.random().toString();
-     const reader = fs.createReadStream(files[0].path);
+     const reader = fs.createReadStream(files.file.path);
      const stream = fs.createWriteStream(path.join(os.tmpdir(), fileId));
      reader.pipe(stream);
-     console.log('uploading %s -> %s', files[0].name, stream.path); 
+     console.log('uploading %s -> %s', files.file.name, stream.path); 
      ctx.body = `{"id":"${fileId}"}`;
   });
 
-  router.post("/graphql", graphqlKoa(buildOptions));
+  router.post("/graphql",koaBody(), graphqlKoa(buildOptions));
   router.get("/graphql", graphqlKoa(buildOptions));
   // Setup the /graphiql route to show the GraphiQL UI
   router.get(
