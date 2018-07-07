@@ -42,14 +42,6 @@ const start = async () => {
     };
   };
 
-  // koaBody is needed just for POST.
-  // app.use(async (ctx, next) => {
-  //   await next();
-  //   ctx.set("access-control-allow-credentials", "true");
-  //   ctx.set("access-control-allow-headers", "Content-Type,Access-Token");
-  //   ctx.set("Access-Control-allow-methods", "GET,PUT,POST,DELETE,PATCH,OPTIONS");
-  //   ctx.set("access-control-allow-origin", "http://localhost:3000");
-  // });
   app.use(koaBody({ multipart: true }));
 
 
