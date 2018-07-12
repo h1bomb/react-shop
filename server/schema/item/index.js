@@ -1,7 +1,6 @@
 const { makeExecutableSchema } = require("graphql-tools");
 const resolvers = require("./resolvers");
 
-// The GraphQL schema in string form
 const typeDefs = `
     type Query {
         itemList(id: ID,name: String): [Item!]!
@@ -30,11 +29,9 @@ const typeDefs = `
     }
 `;
 
-// Put together a schema
 const schema = makeExecutableSchema({
   typeDefs,
   resolvers
 });
 
-// 根据所有类型来生成模式对象
 module.exports = schema;
