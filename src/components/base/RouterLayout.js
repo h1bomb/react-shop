@@ -3,10 +3,22 @@ import { BrowserRouter as Router, Switch } from "react-router-dom";
 import AuthCompont from "./AuthCompont";
 import { Layout } from "antd";
 import { ApolloProvider } from "react-apollo";
+import { createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import createSagaMiddleware from 'redux-saga';
+import reducer from '../../reducers';
+import rootSaga from '../../sagas';
 import client from "../../util/client";
 const { Footer } = Layout;
+const sagaMiddleware = createSagaMiddleware()
+const store = createStore(
+  reducer,
+  applyMiddleware(sagaMiddleware)
+)
+sagaMiddleware.run(rootSaga)
 
 export default ({ routes }) => (
+  <Provider store={store}>
   <ApolloProvider client={client}>
     <Router>
       <Layout className="layout">
@@ -26,4 +38,5 @@ export default ({ routes }) => (
       </Layout>
     </Router>
   </ApolloProvider>
+  </Provider>
 );

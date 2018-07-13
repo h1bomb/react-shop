@@ -1,7 +1,9 @@
 export const SIGNIN_USER = 'SIGNIN_USER';
 export const SIGNOUT = 'SIGNOUT';
 export const REGISTER = 'REGISTER';
-export const GET_CRUSER = 'GET_CRUSER';
+export const REQ_CURUSER = 'REQ_CURUSER';
+export const GET_CURUSER = 'GET_CURUSER';
+export const NO_CURUSER = 'NO_CURUSER';
 export const GET_ITEM_LIST= 'GET_ITEM_LIST';
 export const SAVE_CART_ITEM = 'SAVE_CART_ITEM';
 export const GET_ITEM_DETAIL = 'GET_ITEM_DETAIL';

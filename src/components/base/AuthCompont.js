@@ -1,53 +1,51 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import { Route, Redirect, Link } from "react-router-dom";
-import client from "../../util/client";
 import { menu } from "../../util/config";
 import Logout from "../passport/Logout";
-import gql from "graphql-tag";
 import { Layout, Menu } from "antd";
-import NProgress from 'nprogress'
+import NProgress from 'nprogress';
+import {REQ_CURUSER} from '../../actions'
+import { connect } from 'react-redux'
+
 
 const { Header, Content } = Layout;
 
-const CURUSER = gql`
-  {
-    curUser {
-      email
-      id
-    }
+class AuthCompont extends Component {
+  componentWillMount() {
+    this.props.dispatch({type: REQ_CURUSER});
   }
-`;
-export const auth = {
-  authenticate() {
-    return client
-      .query({
-        query: CURUSER,
-        fetchPolicy: "no-cache"
-      })
-      .then(({ data }) => {
-        if (data.curUser.email) {
-          return data.curUser;
-        }
-        return false;
-      })
-      .catch(error => {
-        return false;
-      });
-  }
-};
+  render() {
+    const { component: Component, authState,curUser,...rest} = this.props;
+    console.log(rest)
 
-const AuthCompont = ({ component: Component, ...rest }) => {
-  return (
-    <Route
-      {...rest}
-      render={() => (
-        <RenderCompont {...rest}>
-          <Component {...rest} />
-        </RenderCompont>
-      )}
-    />
-  );
-};
+    return (
+      <Route
+        
+        render={() => (
+          <RenderCompont {...rest} authState={authState} curUser={curUser}>
+            <Component {...rest} />
+          </RenderCompont>
+        )}
+      />
+    );
+  }
+}
+
+// const AuthCompont = ({ component: Component, ...rest, authState,curUser, dispatch  }) => {
+//   if(authState === 0) {
+//     dispatch({type: REQ_CURUSER});
+//   }
+//   return (
+//     <Route
+//       {...rest}
+//       render={() => (
+//         <RenderCompont {...rest} authState={authState} curUser={curUser}>
+//           <Component {...rest} />
+//         </RenderCompont>
+//       )}
+//     />
+//   );
+// };
 
 const MainMenu = ({ menus, curMenus }) => (
   <Menu
@@ -64,30 +62,12 @@ const MainMenu = ({ menus, curMenus }) => (
   </Menu>
 );
 
-class RenderCompont extends Component {
-  state = {
-    authState: 0,
-    curUser: {}
-  };
-  componentDidMount() {
-    auth.authenticate().then(data => {
-      if (data && data.email) {
-        this.setState({
-          authState: 1,
-          curUser: data
-        });
-      } else {
-        this.setState({
-          authState: -1,
-          curUser: {}
-        });
-      }
-      NProgress.done();
-    });
-  }
-  render() {
+const RenderCompont = ({location,isPublic,authState,path,curUser,children}) => {
     NProgress.start();
-    if (this.props.isPublic || this.state.authState === 1) {
+    if(authState !== 0) {
+      NProgress.done();
+    }
+    if (isPublic || authState === 1) {
       return (
         <div>
           <Header>
@@ -101,8 +81,8 @@ class RenderCompont extends Component {
               }}
               src="/img/shop.png"
             />
-            <MainMenu menus={menu} curMenus={this.props.path} />
-            <Logout {...this.props} curUser={this.state.curUser} />
+            <MainMenu menus={menu} curMenus={path} />
+            <Logout curUser={curUser} />
           </Header>
           <Content
             style={{
@@ -111,16 +91,16 @@ class RenderCompont extends Component {
               margin: 50
             }}
           >
-            {this.props.children}
+            {children}
           </Content>
         </div>
       );
-    } else if (this.state.authState === -1) {
+    } else if (authState === -1) {
       return (
         <Redirect
           to={{
             pathname: "/login",
-            state: { from: this.props.location }
+            state: { from: location }
           }}
         />
       );
@@ -128,6 +108,5 @@ class RenderCompont extends Component {
       return <p>Loading...</p>;
     }
   }
-}
 
-export default AuthCompont;
+export default connect(state=>state)(AuthCompont);
