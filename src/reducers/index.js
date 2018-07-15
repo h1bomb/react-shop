@@ -1,6 +1,7 @@
 import {
     GET_CURUSER,
-    NO_CURUSER
+    NO_CURUSER,
+    SET_AUTHSATAE
 } from '../actions';
 
 
@@ -9,6 +10,11 @@ const rootReducer = (state = {
   curUser: {}
 }, action) => {
   switch (action.type) {
+    case SET_AUTHSATAE:
+      return {
+        ...state,
+        authState: 0
+      };
     case GET_CURUSER:
       return {
         ...state,

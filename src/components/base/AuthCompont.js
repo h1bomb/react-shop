@@ -12,15 +12,14 @@ const { Header, Content } = Layout;
 
 class AuthCompont extends Component {
   componentWillMount() {
-    this.props.dispatch({type: REQ_CURUSER});
+      console.log('auth dispatched');
+      this.props.dispatch({type: REQ_CURUSER});
   }
   render() {
     const { component: Component, authState,curUser,...rest} = this.props;
-    console.log(rest)
-
     return (
       <Route
-        
+        {...rest}
         render={() => (
           <RenderCompont {...rest} authState={authState} curUser={curUser}>
             <Component {...rest} />
@@ -30,22 +29,6 @@ class AuthCompont extends Component {
     );
   }
 }
-
-// const AuthCompont = ({ component: Component, ...rest, authState,curUser, dispatch  }) => {
-//   if(authState === 0) {
-//     dispatch({type: REQ_CURUSER});
-//   }
-//   return (
-//     <Route
-//       {...rest}
-//       render={() => (
-//         <RenderCompont {...rest} authState={authState} curUser={curUser}>
-//           <Component {...rest} />
-//         </RenderCompont>
-//       )}
-//     />
-//   );
-// };
 
 const MainMenu = ({ menus, curMenus }) => (
   <Menu
@@ -63,6 +46,8 @@ const MainMenu = ({ menus, curMenus }) => (
 );
 
 const RenderCompont = ({location,isPublic,authState,path,curUser,children}) => {
+   console.log('authState:', authState);
+   console.log('children:',children);
     NProgress.start();
     if(authState !== 0) {
       NProgress.done();
@@ -109,4 +94,7 @@ const RenderCompont = ({location,isPublic,authState,path,curUser,children}) => {
     }
   }
 
-export default connect(state=>state)(AuthCompont);
+export default connect(state=>{
+  console.log('connect:',state);
+  return state;
+})(AuthCompont)

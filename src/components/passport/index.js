@@ -4,6 +4,8 @@ import { Redirect, Link } from "react-router-dom";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 import "./index.css";
+import {SET_AUTHSATAE} from '../../actions'
+import { connect } from 'react-redux'
 
 const FormItem = Form.Item;
 
@@ -31,6 +33,7 @@ class NormalLoginForm extends Component {
         signIn({ variables: { email: values } }).then(({ data }) => {
           if (data.signinUser.user) {
             message.info("Sign in!");
+            this.props.dispatch({type: SET_AUTHSATAE});
             this.setState({ redirectToReferrer: true });
           } else {
             message.error("Sign fail!");
@@ -45,6 +48,7 @@ class NormalLoginForm extends Component {
     const { redirectToReferrer } = this.state;
 
     if (redirectToReferrer) {
+      console.log('login to:',from)
       return <Redirect to={from} />;
     }
 
@@ -104,4 +108,4 @@ class NormalLoginForm extends Component {
   }
 }
 
-export default Form.create()(NormalLoginForm);
+export default connect()(Form.create()(NormalLoginForm));
