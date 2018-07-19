@@ -59,7 +59,7 @@ const start = async () => {
     const reader = fs.createReadStream(files.file.path);
     const stream = fs.createWriteStream(path.join(os.tmpdir(), fileId));
     reader.pipe(stream);
-    console.log('uploading %s -> %s', files.file.name, stream.path);
+    console.log('uploading %s -> %s', files.file.name, stream.path);// eslint-disable-line
     ctx.body = `{"id":"${fileId}"}`;
   });
 
