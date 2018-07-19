@@ -54,8 +54,8 @@ const typeDefs = `
 
 // Put together a schema
 const schema = makeExecutableSchema({
-    typeDefs,
-    resolvers
+  typeDefs,
+  resolvers,
 });
 
 // 根据所有类型来生成模式对象

@@ -1,9 +1,12 @@
-import React from "react";
-import { Query, Mutation } from "react-apollo";
-import gql from "graphql-tag";
-import { List, Button, Radio, Card } from "antd";
-import Popform from "../base/PopForm";
-import Loading from "../base/Loading";
+import React from 'react';
+import { Query, Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
+import {
+  List, Button, Radio, Card,
+} from 'antd';
+import Popform from '../base/PopForm';
+import Loading from '../base/Loading';
+
 const RadioGroup = Radio.Group;
 const { Meta } = Card;
 
@@ -38,34 +41,33 @@ const DELETE_ADDRESS = gql`
 const AddressForm = ({ submit, item, action }) => {
   const formSet = [
     {
-      key: "mobile",
-      label: "Mobile",
+      key: 'mobile',
+      label: 'Mobile',
       required: true,
-      message: "Please input the mobile!"
+      message: 'Please input the mobile!',
     },
     {
-      key: "address",
-      label: "Address",
+      key: 'address',
+      label: 'Address',
       required: true,
-      message: "Please input the address!"
+      message: 'Please input the address!',
     },
     {
-      key: "receiver",
-      label: "Receiver",
+      key: 'receiver',
+      label: 'Receiver',
       required: true,
-      message: "Please input the receiver!"
-    }
+      message: 'Please input the receiver!',
+    },
   ];
 
-  const dataProc = data => {
+  const dataProc = (data) => {
     let itemData = data;
     if (item) {
       itemData = {
         ...item,
-        ...data
+        ...data,
       };
     }
-    delete itemData.__typename;
     submit({ variables: { address: itemData } });
   };
   return (
@@ -81,30 +83,29 @@ const AddressForm = ({ submit, item, action }) => {
 };
 
 const SaveAddress = ({ record }) => {
-  const actionName = record ? "update" : "add address";
+  const actionName = record ? 'update' : 'add address';
   return (
     <Mutation
       mutation={SAVE_ADDRESS}
       update={(cache, { data: { saveAddress } }) => {
         const { userAddresses } = cache.readQuery({ query: USER_ADDRESSES });
-        let newUserAddresses = userAddresses.map(val => {
+        let newUserAddresses = userAddresses.map((val) => {
           if (val.id === saveAddress.id) {
             return saveAddress;
-          } else {
-            return val;
           }
+          return val;
         });
         if (!record) {
           newUserAddresses = [...userAddresses, saveAddress];
         }
         cache.writeQuery({
           query: USER_ADDRESSES,
-          data: { userAddresses: newUserAddresses }
+          data: { userAddresses: newUserAddresses },
         });
       }}
     >
       {(saveAddress, { loading, error }) => (
-        <div style={{ display: "inline" }}>
+        <div style={{ display: 'inline' }}>
           <AddressForm submit={saveAddress} item={record} action={actionName} />
           <Loading loading={loading} error={error} />
         </div>
@@ -116,20 +117,20 @@ const SaveAddress = ({ record }) => {
 const DeleteAddress = prams => (
   <Mutation
     mutation={DELETE_ADDRESS}
-    update={cache => {
+    update={(cache) => {
       const { userAddresses } = cache.readQuery({ query: USER_ADDRESSES });
       cache.writeQuery({
         query: USER_ADDRESSES,
         data: {
-          userAddresses: userAddresses.filter(val => val.id !== prams.id)
-        }
+          userAddresses: userAddresses.filter(val => val.id !== prams.id),
+        },
       });
     }}
   >
     {(deleteAddress, { loading, error }) => (
-      <div style={{ display: "inline" }}>
+      <div style={{ display: 'inline' }}>
         <Button
-          style={{ display: "inline" }}
+          style={{ display: 'inline' }}
           type="danger"
           onClick={() => deleteAddress({ variables: prams })}
         >
@@ -142,32 +143,33 @@ const DeleteAddress = prams => (
 );
 
 const AddressList = ({ data, defaultValue, setAddress }) => (
-  <RadioGroup 
-    name="addressId" 
+  <RadioGroup
+    name="addressId"
     defaultValue={defaultValue}
-    onChange={(e)=>{
+    onChange={(e) => {
       setAddress(e.target.value);
     }}
-    >
+  >
     <List
       dataSource={data}
       renderItem={item => (
         <List.Item
-          style={{ width: 250,float:"left",margin:5 }}
+          style={{ width: 250, float: 'left', margin: 5 }}
         >
           <Card
-            style={{ width: 250}}
+            style={{ width: 250 }}
             actions={[
               <DeleteAddress id={item.id} />,
-              <SaveAddress record={item} />
+              <SaveAddress record={item} />,
             ]}
           >
             <Meta
-              title={
+              title={(
                 <Radio value={item.id}>
-                  {item.address}&nbsp;{item.receiver}
+                  {item.address}&nbsp;
+                  {item.receiver}
                 </Radio>
-              }
+)}
               description={item.mobile}
             />
           </Card>
@@ -177,27 +179,29 @@ const AddressList = ({ data, defaultValue, setAddress }) => (
   </RadioGroup>
 );
 
-const Address = ({setAddress}) => (
+const Address = ({ setAddress }) => (
   <Query query={USER_ADDRESSES}>
-    {({ loading, error, data }) => {
-      return (
-        <div>
-          <Loading loading={loading} error={error} />
-          <SaveAddress />
-          {(()=>{
-            if(!loading) {
-              const addrs = data.userAddresses;
-              const defaultValue = addrs&&addrs.length>0&&addrs[0].id;
-              setAddress(defaultValue);
-              return (<AddressList setAddress={setAddress} data={data.userAddresses} defaultValue={defaultValue} />) 
-            } else {
-              return '';
-            }
-            
-          })()}
-        </div>
-      );
-    }}
+    {({ loading, error, data }) => (
+      <div>
+        <Loading loading={loading} error={error} />
+        <SaveAddress />
+        {(() => {
+          if (!loading) {
+            const addrs = data.userAddresses;
+            const defaultValue = addrs && addrs.length > 0 && addrs[0].id;
+            setAddress(defaultValue);
+            return (
+              <AddressList
+                setAddress={setAddress}
+                data={data.userAddresses}
+                defaultValue={defaultValue}
+              />
+            );
+          }
+          return '';
+        })()}
+      </div>
+    )}
   </Query>
 );
 

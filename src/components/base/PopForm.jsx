@@ -1,5 +1,9 @@
-import React, { Component } from "react";
-import { Button, Modal, Form, Input,InputNumber } from "antd";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import {
+  Button, Modal, Form, Input, InputNumber,
+} from 'antd';
+
 const FormItem = Form.Item;
 
 /**
@@ -9,32 +13,31 @@ class FormPanel extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      visible: false
+      visible: false,
     };
   }
 
   show = () => {
     this.setState({
-      visible: true
+      visible: true,
     });
   };
 
   cancel = () => {
     this.setState({
-      visible: false
+      visible: false,
     });
   };
 
-  handleSubmit = e => {
-    const { form, dataProc} = this.props;
+  handleSubmit = (e) => {
+    const { form, dataProc } = this.props;
     e.preventDefault();
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        console.log("Received values of form: ", values);
         dataProc(values);
-        this.props.form.resetFields();
+        form.resetFields();
         this.setState({
-          visible: false
+          visible: false,
         });
       }
     });
@@ -42,11 +45,13 @@ class FormPanel extends Component {
 
   render() {
     const { visible } = this.state;
-    const { buttonText, modalTitle, okText, formSet } = this.props;
-    const { getFieldDecorator } = this.props.form;
+    const {
+      buttonText, modalTitle, okText, formSet, form,
+    } = this.props;
+    const { getFieldDecorator } = form;
 
     return (
-      <div style={{ textAlign: "left",display: "inline" }}>
+      <div style={{ textAlign: 'left', display: 'inline' }}>
         <Button type="primary" onClick={this.show}>
           {buttonText}
         </Button>
@@ -61,8 +66,8 @@ class FormPanel extends Component {
             {formSet.map(val => (
               <FormItem label={val.key} key={val.key}>
                 {getFieldDecorator(val.key, {
-                  rules: [{ required: val.required, message: val.message }]
-                })(val.type==="number"?<InputNumber min={0} max={1000}/>:<Input />)}
+                  rules: [{ required: val.required, message: val.message }],
+                })(val.type === 'number' ? <InputNumber min={0} max={1000} /> : <Input />)}
               </FormItem>
             ))}
           </Form>
@@ -71,15 +76,30 @@ class FormPanel extends Component {
     );
   }
 }
+
+FormPanel.propTypes = {
+  form: PropTypes.instanceOf(Object).isRequired,
+  dataProc: PropTypes.func.isRequired,
+  buttonText: PropTypes.string.isRequired,
+  modalTitle: PropTypes.string.isRequired,
+  okText: PropTypes.string.isRequired,
+  formSet: PropTypes.arrayOf(Object),
+};
+
+FormPanel.defaultProps = {
+  formSet: [],
+};
+
 export default Form.create({
   mapPropsToFields({ data }) {
     if (!data) {
-      return { nothing: Form.createFormField({ value: "" }) };
+      return { nothing: Form.createFormField({ value: '' }) };
     }
-    let ret = {};
-    for (let key in data) {
+    const ret = {};
+
+    Object.keys(data).forEach((key) => {
       ret[key] = Form.createFormField({ value: data[key] });
-    }
+    });
     return ret;
-  }
+  },
 })(FormPanel);

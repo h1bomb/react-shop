@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-import { Button, message } from "antd";
-import { Mutation } from "react-apollo";
-import gql from "graphql-tag";
-import { Link } from "react-router-dom";
+import React, { Component } from 'react';
+import { Button, message } from 'antd';
+import { Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
+import { Link } from 'react-router-dom';
 
 const SIGNOUT = gql`
   mutation signoutUser {
@@ -22,16 +22,16 @@ class Logout extends Component {
           }
 
           if (!curUser.email) {
-            return "";
+            return '';
           }
           return (
-            <div style={{ float: "right", color: "#fff" }}>
+            <div style={{ float: 'right', color: '#fff' }}>
               {curUser.email}
               <Link to="/cart">
-                <Button 
-                   style={{ marginLeft: 10 }} 
-                   type="primary"
-                   icon="shopping-cart"
+                <Button
+                  style={{ marginLeft: 10 }}
+                  type="primary"
+                  icon="shopping-cart"
                 >
                   Cart
                 </Button>
@@ -41,7 +41,7 @@ class Logout extends Component {
                 type="primary"
                 icon="logout"
                 loading={loading}
-                onClick={e => {
+                onClick={() => {
                   signoutUser().then(() => {
                     window.location.reload();
                   });

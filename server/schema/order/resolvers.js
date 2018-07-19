@@ -1,29 +1,28 @@
-const { ObjectID } = require("mongodb");
+const { ObjectID } = require('mongodb');
 
-const checkAndUpdateStock = async (Items,cartItems) => {
+const checkAndUpdateStock = async (Items, cartItems) => {
   const itemIds = [];
   const itemStock = {};
 
-  cartItems.forEach(cartItem => {
+  cartItems.forEach((cartItem) => {
     itemStock[cartItem.item.id] = cartItem.count;
     itemIds.push(cartItem.item.id);
   });
-  const items =  await Items.find({ _id: {$in: itemIds}}).toArray();
+  const items = await Items.find({ _id: { $in: itemIds } }).toArray();
   const rets = {};
 
-  items.forEach(async val => {
-    const count = itemStock[val._id];
-    if(val.stock > count) {
-      const ret = await Items.update({_id: val._id},{$set: {stock:(val.stock - count)}});
-      rets[val._id] = ret.result;
+  items.forEach(async (val) => {
+    const count = itemStock[val._id];// eslint-disable-line
+    if (val.stock > count) {
+      const ret = await Items.update({ _id: val._id }, { $set: { stock: (val.stock - count) } });// eslint-disable-line
+      rets[val._id] = ret.result;// eslint-disable-line
     } else {
-      rets[val._id] = false;
+      rets[val._id] = false;// eslint-disable-line
     }
   });
-  
-  console.log('rets:',rets);
+
   return rets;
-}
+};
 
 module.exports = {
   Query: {
@@ -31,70 +30,74 @@ module.exports = {
       if (!user) {
         return [];
       }
-      return await Orders.find({ uid: ObjectID(user._id),state : { $ne : 'caneled' }  }).toArray();
+      const orderRet = await Orders.find({ uid: ObjectID(user._id), state: { $ne: 'caneled' } }).toArray();// eslint-disable-line
+      return orderRet;
     },
-    userAddresses: async (root, data, { user,mongo: { Address } }) => {
+    userAddresses: async (root, data, { user, mongo: { Address } }) => {
       if (!user) {
         return [];
       }
-      return await Address.find({ uid: user._id }).toArray();
-    }
+      const userAddressList = await Address.find({ uid: user._id }).toArray();// eslint-disable-line
+      return userAddressList;
+    },
   },
   Mutation: {
-    submitOrder: async (root, data, { user, mongo: { Orders, Carts, Address, Items } }) => {
+    submitOrder: async (root, data, {
+      user, mongo: {
+        Orders, Carts, Address, Items,
+      },
+    }) => {
       if (!user) {
         return 0;
       }
-      const {order} = data;
+      const { order } = data;
       const cartIds = order.cartIds.map(val => ObjectID(val));
       const cartItems = await Carts.find({ _id: { $in: cartIds } }).toArray();
       const address = await Address.findOne({ _id: ObjectID(order.addressId) });
       let total = 0;
-      let orderItems = [];
-      cartItems.forEach(v => {
+      const orderItems = [];
+      cartItems.forEach((v) => {
         total += v.item.price * v.count;
         orderItems.push({
           id: v.item.id,
           name: v.item.name,
           cover: v.item.cover,
           price: v.item.price,
-          count: v.count
+          count: v.count,
         });
       });
 
-      let orderObj = {
-        uid: user._id,
+      const orderObj = {
+        uid: user._id,// eslint-disable-line
         address,
         items: orderItems,
         description: order.description,
-        total
+        total,
       };
       const response = await Orders.insert(orderObj);
-      if(response.insertedIds[0]) {
-        const ret =  await Carts.deleteMany({uid: user._id});
-        console.log('clear cart:',ret);
+      if (response.insertedIds[0]) {
+        const ret = await Carts.deleteMany({ uid: user._id });// eslint-disable-line
         checkAndUpdateStock(Items, cartItems);
       }
 
       return Object.assign(
         {
-          id: response.insertedIds[0]
+          id: response.insertedIds[0],
         },
-        orderObj
+        orderObj,
       );
-
     },
     cancelOrder: async (root, data, { user, mongo: { Orders } }) => {
-      if(!user) {
+      if (!user) {
         return '';
       }
       const ret = await Orders.update(
-        { uid: user._id, _id: ObjectID(data.orderId)},
-        { $set: { state: 'caneled' }}
+        { uid: user._id, _id: ObjectID(data.orderId) },// eslint-disable-line
+        { $set: { state: 'caneled' } },
       );
       if (ret.result.nModified > 0) {
         return data.orderId;
-      } 
+      }
       return '';
     },
     saveAddress: async (root, data, { user, mongo: { Address } }) => {
@@ -103,37 +106,36 @@ module.exports = {
       }
 
       const { address } = data;
-      addressId = (address.id ? ObjectID(address.id) : ObjectID());
-      const condition = { _id: addressId, uid: user._id };
+      const addressId = (address.id ? ObjectID(address.id) : ObjectID());
+      const condition = { _id: addressId, uid: user._id };// eslint-disable-line
       delete address.id;
       await Address.update(
         condition,
-        {...address, uid: user._id},
-        { upsert: true }
+        { ...address, uid: user._id },// eslint-disable-line
+        { upsert: true },
       );
-
-      return await Address.findOne(condition);
+      const addressObj = await Address.findOne(condition);
+      return addressObj;
     },
-    deleteAddress: async (root, data, {user, mongo: { Address } }) => {
-      if(!user) {
+    deleteAddress: async (root, data, { user, mongo: { Address } }) => {
+      if (!user) {
         return 0;
       }
       const response = await Address.deleteOne({
         _id: ObjectID(data.addressId),
-        uid: user._id
+        uid: user._id,// eslint-disable-line
       });
-      
+
       if (response.deletedCount === 1) {
         return data.addressId;
-      } else {
-        return response.deletedCount;
       }
-    }
+      return response.deletedCount;
+    },
   },
   Address: {
-    id: root => root._id || root.id
+    id: root => root._id || root.id,// eslint-disable-line
   },
   Order: {
-    id: root => root._id || root.id
-  }
+    id: root => root._id || root.id,// eslint-disable-line
+  },
 };

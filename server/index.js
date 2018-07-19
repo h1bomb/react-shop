@@ -1,48 +1,49 @@
-const koa = require("koa"); // koa@2
-const koaRouter = require("koa-router");
-const koaBody = require("koa-body");
-const fs = require("fs");
-
+const koa = require('koa'); // koa@2
+const koaRouter = require('koa-router');
+const koaBody = require('koa-body');
+const fs = require('fs');
 const cors = require('koa2-cors');
 const path = require('path');
 const os = require('os');
-const { graphqlKoa, graphiqlKoa } = require("apollo-server-koa");
-const connectMongo = require("./schema/mongo-connector");
-const passportSchema = require("./schema/passport");
-const itemSchema = require("./schema/item");
-const cartSchema = require("./schema/cart");
-const orderSchema = require("./schema/order");
-const { mergeSchemas } = require("graphql-tools");
-const { authenticate } = require("./authentication");
-const app = new koa();
-const router = new koaRouter();
+const { graphqlKoa, graphiqlKoa } = require('apollo-server-koa');
+const { mergeSchemas } = require('graphql-tools');
+
+const connectMongo = require('./schema/mongo-connector');
+const passportSchema = require('./schema/passport');
+const itemSchema = require('./schema/item');
+const cartSchema = require('./schema/cart');
+const orderSchema = require('./schema/order');
+const { authenticate } = require('./authentication');
+
+const app = new koa();// eslint-disable-line
+const router = new koaRouter();// eslint-disable-line
 const PORT = 3001;
 const schema = mergeSchemas({
   schemas: [
     passportSchema,
     itemSchema,
     cartSchema,
-    orderSchema
-  ]
+    orderSchema,
+  ],
 });
 
 const start = async () => {
   const mongo = await connectMongo();
 
-  const buildOptions = async (req, res) => {
+  const buildOptions = async (req) => {
     const user = await authenticate(req, mongo.Users);
     return {
       context: {
         mongo,
         user,
-        req
+        req,
       },
-      schema
+      schema,
     };
   };
 
   app.use(cors({
-    origin: function(ctx) {
+    origin() {
       return 'http://localhost:3000';
     },
     exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
@@ -52,24 +53,24 @@ const start = async () => {
     allowHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
   }));
 
-  router.post('/upload',koaBody({multipart:true}),async function(ctx, next) {
-     const files = ctx.request.files;
-     const fileId = Math.random().toString();
-     const reader = fs.createReadStream(files.file.path);
-     const stream = fs.createWriteStream(path.join(os.tmpdir(), fileId));
-     reader.pipe(stream);
-     console.log('uploading %s -> %s', files.file.name, stream.path); 
-     ctx.body = `{"id":"${fileId}"}`;
+  router.post('/upload', koaBody({ multipart: true }), async (ctx) => {
+    const { files } = ctx.request;
+    const fileId = Math.random().toString();
+    const reader = fs.createReadStream(files.file.path);
+    const stream = fs.createWriteStream(path.join(os.tmpdir(), fileId));
+    reader.pipe(stream);
+    console.log('uploading %s -> %s', files.file.name, stream.path);
+    ctx.body = `{"id":"${fileId}"}`;
   });
 
-  router.post("/graphql",koaBody(), graphqlKoa(buildOptions));
-  router.get("/graphql", graphqlKoa(buildOptions));
+  router.post('/graphql', koaBody(), graphqlKoa(buildOptions));
+  router.get('/graphql', graphqlKoa(buildOptions));
   // Setup the /graphiql route to show the GraphiQL UI
   router.get(
-    "/graphiql",
+    '/graphiql',
     graphiqlKoa({
-      endpointURL: "/graphql" // a POST endpoint that GraphiQL will make the actual requests to
-    })
+      endpointURL: '/graphql', // a POST endpoint that GraphiQL will make the actual requests to
+    }),
   );
 
   app.use(router.routes());

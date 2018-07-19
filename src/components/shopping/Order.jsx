@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import { Mutation } from "react-apollo";
-import gql from "graphql-tag";
-import { Button, message } from "antd";
-import Cart from "../shopping/Cart";
-import Address from "../shopping/Address";
-import { withRouter } from "react-router-dom";
+import React, { Component } from 'react';
+import { Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
+import { Button, message } from 'antd';
+import { withRouter } from 'react-router-dom';
+import Cart from './Cart';
+import Address from './Address';
 
 const SUBMIT_ORDER = gql`
   mutation submitOrder($order: ORDER) {
@@ -17,15 +17,15 @@ const SUBMIT_ORDER = gql`
 class Order extends Component {
   constructor(props) {
     super(props);
-    this.addressId = "";
+    this.addressId = '';
     this.cartIds = [];
   }
 
-  setAddress = value => {
+  setAddress = (value) => {
     this.addressId = value;
   };
 
-  setCartIds = ids => {
+  setCartIds = (ids) => {
     this.cartIds = ids;
   };
 
@@ -36,7 +36,7 @@ class Order extends Component {
         <Cart setCartIds={this.setCartIds} canModify={false} />
         <Mutation
           mutation={SUBMIT_ORDER}
-          update={cache => {
+          update={(cache) => {
             cache.reset();
           }}
         >
@@ -45,20 +45,21 @@ class Order extends Component {
               loading={loading}
               onClick={() => {
                 if (error) {
-                  message.error("something wrong!");
+                  message.error('something wrong!');
                   return;
                 }
                 submitOrder({
                   variables: {
                     order: {
                       addressId: this.addressId,
-                      cartIds: this.cartIds
-                    }
-                  }
-                }).then(data => {
+                      cartIds: this.cartIds,
+                    },
+                  },
+                }).then((data) => {
+                  const { history } = this.props;
                   if (data.data.submitOrder.id) {
-                    message.success("order success!");
-                    this.props.history.push("/orderlist");
+                    message.success('order success!');
+                    history.push('/orderlist');
                   }
                 });
               }}

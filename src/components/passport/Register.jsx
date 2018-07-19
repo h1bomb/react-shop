@@ -1,8 +1,10 @@
-import React, { Component } from "react";
-import { Form, Input, Button, message } from "antd";
-import { Redirect } from "react-router-dom";
-import { Mutation } from "react-apollo";
-import gql from "graphql-tag";
+import React, { Component } from 'react';
+import {
+  Form, Input, Button, message,
+} from 'antd';
+import { Redirect } from 'react-router-dom';
+import { Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
 
 const FormItem = Form.Item;
 
@@ -17,53 +19,55 @@ const REGISTER = gql`
 
 class NormalRegisterForm extends Component {
   state = {
-    redirectToReferrer: false
+    redirectToReferrer: false,
   };
 
   handleSubmit = (e, register) => {
     e.preventDefault();
-    this.props.form.validateFields((err, values) => {
+    const { form } = this.props;
+    form.validateFields((err, values) => {
       if (!err) {
         const email = {
           email: values.email,
-          password: values.password
+          password: values.password,
         };
         register({ variables: { email } }).then(({ data }) => {
           if (data.createUser.email) {
-            message.info("Register Success!");
+            message.info('Register Success!');
             this.setState({ redirectToReferrer: true });
           } else {
-            message.error("Register fail!");
+            message.error('Register fail!');
           }
         });
       }
     });
   };
+
   render() {
-    const { getFieldDecorator } = this.props.form;
-    const { from } = { from: { pathname: "/" } };
+    const { form: { getFieldDecorator } } = this.props;
+    const { from } = { from: { pathname: '/' } };
     const { redirectToReferrer } = this.state;
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 8 }
+        sm: { span: 8 },
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 16 }
-      }
+        sm: { span: 16 },
+      },
     };
     const tailFormItemLayout = {
       wrapperCol: {
         xs: {
           span: 24,
-          offset: 0
+          offset: 0,
         },
         sm: {
           span: 16,
-          offset: 8
-        }
-      }
+          offset: 8,
+        },
+      },
     };
     if (redirectToReferrer) {
       return <Redirect to={from} />;
@@ -71,51 +75,51 @@ class NormalRegisterForm extends Component {
 
     return (
       <Mutation mutation={REGISTER}>
-        {(createUser, { loading, error }) => (
+        {createUser => (
           <Form
-            style={{ maxWidth: 500, margin: "0 auto" }}
-            onSubmit={e => {
+            style={{ maxWidth: 500, margin: '0 auto' }}
+            onSubmit={(e) => {
               this.handleSubmit(e, createUser);
             }}
           >
             <FormItem {...formItemLayout} label="E-mail">
-              {getFieldDecorator("email", {
+              {getFieldDecorator('email', {
                 rules: [
                   {
-                    type: "email",
-                    message: "The input is not valid E-mail!"
+                    type: 'email',
+                    message: 'The input is not valid E-mail!',
                   },
                   {
                     required: true,
-                    message: "Please input your E-mail!"
-                  }
-                ]
+                    message: 'Please input your E-mail!',
+                  },
+                ],
               })(<Input />)}
             </FormItem>
             <FormItem {...formItemLayout} label="Password">
-              {getFieldDecorator("password", {
+              {getFieldDecorator('password', {
                 rules: [
                   {
                     required: true,
-                    message: "Please input your password!"
+                    message: 'Please input your password!',
                   },
                   {
-                    validator: this.validateToNextPassword
-                  }
-                ]
+                    validator: this.validateToNextPassword,
+                  },
+                ],
               })(<Input type="password" />)}
             </FormItem>
             <FormItem {...formItemLayout} label="Confirm Password">
-              {getFieldDecorator("confirm", {
+              {getFieldDecorator('confirm', {
                 rules: [
                   {
                     required: true,
-                    message: "Please confirm your password!"
+                    message: 'Please confirm your password!',
                   },
                   {
-                    validator: this.compareToFirstPassword
-                  }
-                ]
+                    validator: this.compareToFirstPassword,
+                  },
+                ],
               })(<Input type="password" onBlur={this.handleConfirmBlur} />)}
             </FormItem>
             <FormItem {...tailFormItemLayout}>

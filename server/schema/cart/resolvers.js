@@ -1,4 +1,4 @@
-const { ObjectID } = require("mongodb");
+const { ObjectID } = require('mongodb');
 
 module.exports = {
   Query: {
@@ -6,78 +6,78 @@ module.exports = {
       if (!user) {
         return [];
       }
-      const cartItems = await Carts.find({ uid: user._id }).toArray();
+      const cartItems = await Carts.find({ uid: user._id }).toArray();// eslint-disable-line
       return cartItems;
-    }
+    },
   },
   Mutation: {
     saveCartItem: async (root, data, { user, mongo: { Carts, Items } }) => {
-      let { cartItem } = data;
-      const errorObj = { id: 0, itemId: "", uid: "", count: 0 };
+      const { cartItem } = data;
+      const errorObj = {
+        id: 0, itemId: '', uid: '', count: 0,
+      };
 
       if (!user || !Number(cartItem.count)) {
         return errorObj;
       }
       const item = await Items.findOne({
-        _id: ObjectID(cartItem.itemId)
+        _id: ObjectID(cartItem.itemId),
       });
 
       if (!item) {
         return errorObj;
       }
 
-      let count = cartItem.count;
+      let { count } = cartItem;
 
       const existCartItem = await Carts.findOne({
-        uid: user._id,
-        itemId: cartItem.itemId
+        uid: user._id,// eslint-disable-line
+        itemId: cartItem.itemId,
       });
       if (existCartItem && existCartItem.count) {
         if (item.stock < existCartItem.count + cartItem.count) {
           return {
-            message: "stock not enough!"
+            message: 'stock not enough!',
           };
         }
         count += existCartItem.count;
       }
 
       const cartItemObj = {
-        uid: user._id,
+        uid: user._id,// eslint-disable-line
         count,
         itemId: cartItem.itemId,
         item: {
-          id: item._id,
+          id: item._id,// eslint-disable-line
           name: item.name,
           cover: item.cover,
-          price: item.price
-        }
+          price: item.price,
+        },
       };
       const ret = await Carts.update(
-        { uid: user._id, itemId: cartItem.itemId },
+        { uid: user._id, itemId: cartItem.itemId },// eslint-disable-line
         cartItemObj,
-        { upsert: true }
+        { upsert: true },
       );
       if (ret.result.nModified > 0 || ret.result.upserted) {
         return { cartItem: cartItemObj };
-      } else {
-        return { message: "add to cart fail!" };
       }
+      return { message: 'add to cart fail!' };
     },
     deleteCartItem: async (root, data, { mongo: { Carts } }) => {
       const response = await Carts.deleteOne({
-        itemId: data.id
+        itemId: data.id,
       });
       if (response.deletedCount === 1) {
         return data.id;
-      } else {
-        return response.deletedCount;
       }
-    }
+      return response.deletedCount;
+    },
   },
   LessItem: {
-    id: root => root._id || root.id
+    id: root => root._id || root.id,// eslint-disable-line
   },
   CartItem: {
-    id: root => root._id || root.id
-  }
+    id: root => root._id || root.id,// eslint-disable-line
+  },
 };

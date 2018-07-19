@@ -1,0 +1,5 @@
+**/bundle/**/*.js
+**/dist/**/*.js
+src/index.js
+config-overrides.js
+registerServiceWorker.js

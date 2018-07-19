@@ -1,9 +1,10 @@
-import React from "react";
-import { Query, Mutation } from "react-apollo";
-import gql from "graphql-tag";
-import { Card, Collapse, Spin, message,Button } from "antd";
-import { CartList } from "./Cart";
-const Panel = Collapse.Panel;
+import React from 'react';
+import { Query, Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
+import {
+  Card, Collapse, Spin, message, Button,
+} from 'antd';
+import { CartList } from './Cart';
 
 const ORDER_LIST = gql`
   query userOrders {
@@ -36,21 +37,39 @@ const CANCEL_ORDER = gql`
 const OrderItems = ({ items }) => (
   <Collapse defaultActiveKey={items.map(item => item.id)}>
     {items.map(item => (
-      <Panel header={(<span>Order ID:{item.id}<CancelOrder orderId={item.id} /></span>)} key={item.id}>
+      <Collapse.Panel
+        header={(
+          <span>
+Order ID:
+            {item.id}
+            <CancelOrder orderId={item.id} />
+          </span>
+)}
+        key={item.id}
+      >
         <Card title="Address Detail">
-          <p>receiver:{item.address.receiver}</p>
-          <p>mobile:{item.address.mobile}</p>
-          <p>address:{item.address.address}</p>
+          <p>
+receiver:
+            {item.address.receiver}
+          </p>
+          <p>
+mobile:
+            {item.address.mobile}
+          </p>
+          <p>
+address:
+            {item.address.address}
+          </p>
         </Card>
         {(() => {
           const data = item.items.map(val => ({
             item: val,
             itemId: val.id,
-            count: val.count
+            count: val.count,
           }));
           return <CartList data={data} canModify={false} />;
         })()}
-      </Panel>
+      </Collapse.Panel>
     ))}
   </Collapse>
 );
@@ -62,8 +81,8 @@ const OrderList = () => (
         return <Spin />;
       }
       if (error) {
-        message.error("Something Wrong!");
-        return "";
+        message.error('Something Wrong!');
+        return '';
       }
       return <OrderItems items={data.userOrders} />;
     }}
@@ -71,39 +90,43 @@ const OrderList = () => (
 );
 
 const CancelOrder = ({ orderId }) => (
-  <Mutation 
+  <Mutation
     mutation={CANCEL_ORDER}
     update={
-        cache => {
-        const { userOrders } = cache.readQuery({ query: ORDER_LIST });
-        cache.writeQuery({
-          query: ORDER_LIST,
-          data: {
-            userOrders: userOrders.filter(val => val.id !== orderId)
-          }
-        });}
+        (cache) => {
+          const { userOrders } = cache.readQuery({ query: ORDER_LIST });
+          cache.writeQuery({
+            query: ORDER_LIST,
+            data: {
+              userOrders: userOrders.filter(val => val.id !== orderId),
+            },
+          });
+        }
      }
-    >
+  >
     {(submitOrder, { loading, error }) => (
       <Button
-        style={{float:"right", margin:"-5px 5px 0 0"}}
+        style={{ float: 'right', margin: '-5px 5px 0 0' }}
         type="danger"
         loading={loading}
         onClick={() => {
           if (error) {
-            message.error("something wrong!");
+            message.error('something wrong!');
           }
           submitOrder({
             variables: {
-              orderId
+              orderId,
+            },
+          }).then((data) => {
+            if (data.cancelOrder) {
+              message.success('cancel order success!');
             }
-          }).then(data=>{
-              if(data.cancelOrder) {
-                  message.success("cancel order success!");
-              }
           });
         }}
-      >Cancel Order</Button>
+      >
+Cancel Order
+
+      </Button>
     )}
   </Mutation>
 );

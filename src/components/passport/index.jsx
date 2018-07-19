@@ -1,11 +1,13 @@
-import React, { Component } from "react";
-import { Form, Icon, Input, Button, message } from "antd";
-import { Redirect, Link } from "react-router-dom";
-import { Mutation } from "react-apollo";
-import gql from "graphql-tag";
-import "./index.css";
-import {SET_AUTHSATAE} from '../../actions'
-import { connect } from 'react-redux'
+import React, { Component } from 'react';
+import {
+  Form, Icon, Input, Button, message,
+} from 'antd';
+import { Redirect, Link } from 'react-router-dom';
+import { Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
+import './index.css';
+import { connect } from 'react-redux';
+import { SET_AUTHSATAE } from '../../actions';
 
 const FormItem = Form.Item;
 
@@ -23,71 +25,73 @@ const SIGNIN_USER = gql`
 
 class NormalLoginForm extends Component {
   state = {
-    redirectToReferrer: false
+    redirectToReferrer: false,
   };
 
   handleSubmit = (e, signIn) => {
+    const { form, dispatch } = this.props;
     e.preventDefault();
-    this.props.form.validateFields((err, values) => {
+    form.validateFields((err, values) => {
       if (!err) {
         signIn({ variables: { email: values } }).then(({ data }) => {
           if (data.signinUser.user) {
-            message.info("Sign in!");
-            this.props.dispatch({type: SET_AUTHSATAE});
+            message.info('Sign in!');
+            dispatch({ type: SET_AUTHSATAE });
             this.setState({ redirectToReferrer: true });
           } else {
-            message.error("Sign fail!");
+            message.error('Sign fail!');
           }
         });
       }
     });
   };
+
   render() {
-    const { getFieldDecorator } = this.props.form;
-    const { from } = this.props.location.state || { from: { pathname: "/" } };
+    const { form, location } = this.props;
+    const { getFieldDecorator } = form;
+    const { from } = location.state || { from: { pathname: '/' } };
     const { redirectToReferrer } = this.state;
 
     if (redirectToReferrer) {
-      console.log('login to:',from)
       return <Redirect to={from} />;
     }
 
     return (
       <Mutation mutation={SIGNIN_USER}>
-        {(signinUser, { loading, error }) => (
+        {(signinUser, { loading }) => (
           <Form
-            onSubmit={e => {
+            onSubmit={(e) => {
               this.handleSubmit(e, signinUser);
             }}
             className="login-form"
           >
             <FormItem>
-              {getFieldDecorator("email", {
+              {getFieldDecorator('email', {
                 rules: [
-                  { required: true, message: "Please input your username!" }
-                ]
+                  { required: true, message: 'Please input your username!' },
+                ],
               })(
                 <Input
                   prefix={
-                    <Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />
+                    <Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />
                   }
                   placeholder="Email"
-                />
+                />,
               )}
             </FormItem>
             <FormItem>
-              {getFieldDecorator("password", {
+              {getFieldDecorator('password', {
                 rules: [
-                  { required: true, message: "Please input your Password!" }
-                ]
+                  { required: true, message: 'Please input your Password!' },
+                ],
               })(
                 <Input
                   prefix={
-                    <Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />
+                    <Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />
                   }
                   type="password"
                   placeholder="Password"
-                />
+                />,
               )}
             </FormItem>
             <FormItem>
@@ -99,7 +103,11 @@ class NormalLoginForm extends Component {
               >
                 Log in
               </Button>
-              Or <Link to="/register">register now!</Link>
+              Or
+              {' '}
+              <Link to="/register">
+register now!
+              </Link>
             </FormItem>
           </Form>
         )}

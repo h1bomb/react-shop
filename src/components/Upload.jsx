@@ -1,13 +1,15 @@
-import React from "react";
+import React from 'react';
 
-import { Upload, message, Button, Icon } from 'antd';
+import {
+  Upload, message, Button, Icon,
+} from 'antd';
 
 const props = {
   name: 'file',
   action: '//localhost:3001/upload',
   onChange(info) {
     if (info.file.status !== 'uploading') {
-      console.log(info.file, info.fileList);
+      message.info(info.file, info.fileList);
     }
     if (info.file.status === 'done') {
       message.success(`${info.file.name} file uploaded successfully`);
@@ -17,10 +19,12 @@ const props = {
   },
 };
 
-const upload = ()=>(  
-<Upload {...props}>
+const upload = () => (
+  <Upload {...props}>
     <Button>
-      <Icon type="upload" /> Click to Upload
+      <Icon type="upload" />
+      {' '}
+Click to Upload
     </Button>
   </Upload>);
 
